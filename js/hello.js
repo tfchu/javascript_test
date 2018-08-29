@@ -10,8 +10,6 @@ function commonFunction(param, callback) {
     callback(res);
 }
 
-var res1 = {};
-
 function function1(callback) {
     var param = 'function1';
 
