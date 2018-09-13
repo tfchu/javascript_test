@@ -50,10 +50,83 @@ var jsonValue = JSON.parse('{ "firstname": "Tony", "isProgrammer": true}');
 console.log(jsonValue);
 
 // first-class functions: anything you can do with other types, you can do with functions
-// function is a special type of object, with optional name, and invocable() code property
+// function is a special type of object, with optional "name", and invocable() "code" property (invoke by appeding ())
 // greet1.name is "greet1" (name of the function)
 function greet1() {
     console.log('hi');
 }
 greet1.person = 'Tony';         // add person property to the object (function)
 console.log(greet1);
+
+// function statement (no return)
+// function statement stays in memory until it is called
+greet2();               // can go before or after
+function greet2() {
+    console.log('hi');
+}
+
+// function expression (return a value, which is a function object)
+// variable "anonymousGreet" needs to be assigned first, before calling it
+var anonymousGreet = function() {
+    console.log('hi');
+}
+anonymousGreet();       // must go after the assignment
+
+// function as a parameter, then invoke it
+function log(a) {
+    a();
+}
+log(function() {
+    console.log('hi');
+})
+
+// primitive types: pass by value (different location in memory with same value)
+var a = 3;
+var b;
+b = a;
+a = 2;
+console.log(a);     // 2
+console.log(b);     // 3
+// objects (including functions): pass by reference (same location in memory)
+var c = { greetings: 'hi'};
+var d;
+d = c;
+c.greetings = 'hello';      // "mutate" an object: change the value. "immutable": cannot be changed
+console.log(c.greetings);   // hello
+console.log(d.greetings);   // hello
+function changeGreeting(obj) {
+    obj.greetings = 'hola';
+}
+changeGreeting(d);
+console.log(c.greetings);   // hola
+console.log(d.greetings);   // hola
+c = { greetings: 'howdy' }; // "=" creates NEW object (new memory location), c now points to new location
+console.log(c.greetings);   // howdy
+console.log(d.greetings);   // hola
+
+// "this"
+console.log(this);          // global "window" object
+function myfunc() {
+    console.log(this);
+    this.newvar = 'test';   // add new property to window object
+}
+myfunc();
+console.log(newvar);        // call without using "this"
+
+var c = {
+    name: "The c object",   // property
+    log: function() {       // method
+        var self = this;    // "this" refers to the object "c" that the method sits in
+
+        self.name = 'Updated c object';     // self is this
+        console.log(self);
+
+        var setname = function(newname) {
+            self.name = newname;            // "this" now points to global "window" again, workaround is to use self
+        }
+        setname('c object updated again!');
+        console.log(self)
+    }
+}
+console.log(c.name);        // "The c object"
+c.log();
