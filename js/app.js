@@ -228,7 +228,130 @@ console.log(greeting3);             // invoke the function with parameter
 // IIFE
 // function needs a name. use () to bypass the name (parser no longer sees "function" at beginning so no error)
 // then use IIFE to invoke it, the invoke () can be outside of the first ()
-(function(name) {
+// first () is executed in global execution context, second () invokes the function which is executed in function execution context
+var greeting6 = 'Hola';
+(function(global, name) {
     var greeting = 'Inside IIFE: Hello';
+    global.greeting6 = 'Hello';             // overwrite the global "greeting6"
     console.log(greeting + ' ' + name);
-}('John'));                         // or })('John);
+}(window, 'John'));                         // or })('John);
+console.log(greeting6);
+
+// closures
+console.log('CLOSURES');
+// function has access to members of outer functions, even though outer functions execution context is gone
+function greet5(whatosay) {
+    return function(name) {
+        console.log(whatosay + ' ' + name);
+    }
+}
+var sayHi = greet5('Hi');       // execute in greet5 execution context, then gone
+sayHi('Tony');                  // execute in sayHi execution context, which has access to whattosay in greet5, this is "Closure"
+
+// closures
+// function expression: not executed until called
+// when being pushed to arr, function expression is stored in memory with statement console.log(i), use console.log(fs[0]) to view
+// at the end i became 3
+// when function is executed with "()", it has no parameter i in its exection context, then go to outer context and see i = 3
+// variable "arr", "i" is called outer variable (also free variable) from fs[i]()'s perspective
+function buildFunctions() {
+    var arr = [];
+    for (var i = 0; i < 3; i++) {
+        arr.push(
+            function() {
+                console.log(i);     // console.log(j), then console.log(fs[0]), function is also successfully created
+                                    // i.e. i or j is never replaced during delaration 
+            }
+        );
+    }
+    return arr;
+}
+
+var fs = buildFunctions();
+fs[0]();    // 3
+fs[1]();    // 3
+fs[2]();    // 3
+
+// ES-6 solution if we need functions to return 0, 1, 2
+console.log('ES-6');
+function buildFunctions2() {
+    var arr = [];
+    for (var i = 0; i < 3; i++) {
+        let j = i;      // javscript ES-6, "let" creates a variable with scope inside {} of for loop
+        arr.push(
+            function() {
+                console.log(j);
+            }
+        );
+    }
+    return arr;
+}
+
+var fs2 = buildFunctions2();
+fs2[0]();    // 0
+fs2[1]();    // 1
+fs2[2]();    // 2
+
+// ES-5 solution if we need functions to return 0, 1, 2
+console.log('ES-5');
+function buildFunctions3() {
+    var arr = [];
+    for (var i = 0; i < 3; i++) {
+        arr.push(
+            (function(j) {
+                return function() {
+                    console.log(j);
+                }
+            }(i))       // push result of executing the function(j) where j=i, result is another function that prints j
+        );
+    }
+    return arr;
+}
+
+var fs3 = buildFunctions3();
+fs3[0]();    // 0
+fs3[1]();    // 1
+fs3[2]();    // 2
+
+// this is another usage of closure
+// factory function: a function that returns or makes other things (like overloading)
+// idea is to create functions with default parameters by using closures
+function makeGreeting(language) {
+    return function(firstname, lastname) {
+        if (language === 'en') {
+            console.log('Hello ' + firstname + ' ' + lastname);
+        }
+        if (language === 'es') {
+            console.log('Hola ' + firstname + ' ' + lastname);
+        }
+    }
+}
+// these two variable has the same contenct, at different memory locations; each invoke() creates a new execution context
+// javascript engine forms closure
+var greetEn = makeGreeting('en');   // create its execution context, set language = 'en'
+var greetEs = makeGreeting('es');   // create its execution context, set language = 'es'
+greetEn('John', 'Doe');             // closure is greetEn() execution context + outer reference language = 'en'
+greetEs('John', 'Doe');             // closure is greetEs() execution context + outer reference language = 'es'
+
+// closures and callbacks
+// sayHiLater() finishes running (execution context gone)
+// 3 sec later when setTimeout() invoke the function, and due to closure, "greeting" is still available, so it prints Hi!
+// callback function is a parameter of a main function , callback gets executed after main function is done
+// the function you call (invoke) "calls back" by calling the function you gave it when it finishes
+function sayHiLater() {
+    var greeting = 'Hi!';
+    setTimeout(function() {
+        console.log(greeting)
+    }, 3000);
+}
+sayHiLater();
+
+// callback example
+function tellMeWhenDone(callback) {
+    var myvar = 100;    // some work
+    callback(myvar);
+}
+
+tellMeWhenDone(function(i) {
+    console.log('the result is '+ i);
+})
