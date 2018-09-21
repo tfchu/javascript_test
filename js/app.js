@@ -347,6 +347,7 @@ function sayHiLater() {
 sayHiLater();
 
 // callback example
+console.log('CALLBACK');
 function tellMeWhenDone(callback) {
     var myvar = 100;    // some work
     callback(myvar);
@@ -355,3 +356,53 @@ function tellMeWhenDone(callback) {
 tellMeWhenDone(function(i) {
     console.log('the result is '+ i);
 })
+
+// default function methods: call(), apply(), bind()
+// bind(): create a copy of the function, and change what 'this' refers to
+// call(): execute the function and change what 'this' refers to 
+// apply() is similar to call(), except it takes an array for parameters
+console.log('call(), apply(), bind()'); 
+var person1 = {
+    firstname: 'John', 
+    lastname: 'Doe', 
+    getFullName: function() {
+        //console.log(this);
+        var fullname = this.firstname + ' ' + this.lastname;    // this refers to the person object
+        return fullname;
+    }
+}
+var logName = function(lang1, lang2) {
+    //console.log(this);
+    console.log('Logged: ' + this.getFullName());   // 'this' refers to global object if without 'bind()'
+    console.log('Arg: ' + lang1 + ' ' + lang2); 
+}
+var logPersonName = logName.bind(person1);          // 'bind()' changes 'this' in 'logName' to object 'person1'
+                                                    // copy of 'logName' is created
+logPersonName();
+
+logName.call(person1, 'en', 'es');                  // call() changes 'this' to object 'person1' on the fly
+logName.apply(person1, ['en', 'es']);               // apply() takes parameters as an array
+
+// shortcut to change this location
+(function(lang1, lang2) {
+    console.log('Logged: ' + this.getFullName());   // 'this' refers to global object if without 'bind()'
+
+    console.log('Arg: ' + lang1 + ' ' + lang2); 
+}).apply(person1, ['en', 'es']);
+
+// function borrowing
+// person2 does NOT have getFullName(), borrow from person1
+console.log('FUNCTION BORROWING');
+var person2 = {
+    firstname: 'Jane', 
+    lastname: 'Doe',     
+}
+console.log(person1.getFullName.apply(person2));    // change 'this' to person2
+
+// function currying: create a copy of a function, with some preset parameters
+console.log('FUNCTION CURRYING');
+function multiply(a, b) {
+    return a*b;
+}
+var multiplyByTwo = multiply.bind(this, 2);         // set 'a' = 2 permanently, multiplyByTwo is same as multiply before invoke
+console.log(multiplyByTwo(4))                       // b = 4, so value = 2*4 = 8
