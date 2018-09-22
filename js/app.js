@@ -406,3 +406,50 @@ function multiply(a, b) {
 }
 var multiplyByTwo = multiply.bind(this, 2);         // set 'a' = 2 permanently, multiplyByTwo is same as multiply before invoke
 console.log(multiplyByTwo(4))                       // b = 4, so value = 2*4 = 8
+
+// functional programming: use function as parameters, return functions, ... instead of writing independent functions
+console.log('FUNCTIOAL PROGRAMMING')
+// the old way
+var arr1 = [1, 2, 3];
+console.log(arr1);
+
+var arr2 = [];
+for (var i = 0; i < arr1.length; i++) {
+    arr2.push(arr1[i]*2);
+}
+console.log(arr2);
+
+// functional programming way
+function mapForEachItem(arr, fn) {
+    var newArr = [];
+    for (var i = 0; i < arr.length; i++) {
+        newArr.push(
+            fn(arr[i])
+        );
+    }
+    return newArr;
+}
+var arr3 = mapForEachItem(arr1, function(item){
+    return item * 2;
+});
+console.log(arr3);      // [2, 4, 6]
+var arr4 = mapForEachItem(arr1, function(item){
+    return item > 2;
+});
+console.log(arr4);      // [false, false, true]
+
+var checkPastLimit = function(limit, item) {
+    return item > limit;
+}
+var arr5 = mapForEachItem(arr1, checkPastLimit.bind(this, 1));  // default limit = 1, check if element is > 1
+console.log(arr5);      // [false, true, true]
+
+// we don't want to call bind() all the time, wrap it up
+var checkPastLimitBind = function(limit) {      // limit is not passed to the returned function until called
+    return function(limit, item) {              // can change 'limit' to 'limiter' as this is only an expression
+        return item > limit;
+    }.bind(this, limit);
+}
+console.log(checkPastLimitBind(1));
+var arr6 = mapForEachItem(arr1, checkPastLimitBind(1)); 
+console.log(arr6);      // [false, true, true]
