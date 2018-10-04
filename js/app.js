@@ -429,15 +429,17 @@ function mapForEachItem(arr, fn) {
     }
     return newArr;
 }
+// arr3 is arr1's element * 2
 var arr3 = mapForEachItem(arr1, function(item){
     return item * 2;
 });
 console.log(arr3);      // [2, 4, 6]
+// arr4 checks if arr1's element > 2
 var arr4 = mapForEachItem(arr1, function(item){
     return item > 2;
 });
 console.log(arr4);      // [false, false, true]
-
+// arr5 checks if arr1's element > limit
 var checkPastLimit = function(limit, item) {
     return item > limit;
 }
@@ -453,3 +455,10 @@ var checkPastLimitBind = function(limit) {      // limit is not passed to the re
 console.log(checkPastLimitBind(1));
 var arr6 = mapForEachItem(arr1, checkPastLimitBind(1)); 
 console.log(arr6);      // [false, true, true]
+
+// underscore.js
+console.log('UNDERSCORE.JS');
+var arr6 = _.map(arr1, function(item) { return item *3 });  // arr1 * 3
+console.log(arr6);
+var arr7 = _.filter([2, 3, 4, 5, 6, 7], function(item) { return item %2 === 0 });   // even numbers
+console.log(arr7);

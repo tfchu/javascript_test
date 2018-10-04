@@ -1,0 +1,3 @@
+// inheritance: one object gets access to the properties and methods of another object
+// classical inheritance: java, c++, c#, ...
+// prototypal inheritance: javascript
