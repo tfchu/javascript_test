@@ -26,11 +26,12 @@ var john = {
     lastname: 'Doe', 
 }
 
-// NEVER use __proto__ in real application, cause performance issue, demo only!!
+// NEVER use '__proto__' in real application, cause performance issue, demo only!!
 john.__proto__ = person;
 console.log(john.getFullName());    // this refers to the obj that originates the function, i.e. "john"
 console.log(john.firstname);        // prototype chain, find object "john"'s firstname propery, NOT prototype's
 
+// NEVER use '__proto__' in real application, cause performance issue, demo only!!
 // prototype of each types
 // go to developer tool, then type e.g. a.__proto__.: show properties of the __proto__ object
 a = {};                                 // an object
@@ -64,3 +65,44 @@ var jim = {
 }
 _.extend(john, jane, jim);      // add properties from jane, jim to john
 console.log(john);
+
+// 'new' keyword: an javascript operator
+// like java: var john = new Person();
+// this example shows how to create an object via 'new' a function (function constructor)
+// function constructor: a normal function used to construct objects
+console.log('FUNCTION CONSTRUCTOR');
+function Person(firstname, lastname) {
+    console.log(this);                          // empty object with type Person
+    this.firstname = firstname; 
+    this.lastname = lastname; 
+    console.log('this function is invoked!');   // executed
+}
+// new: create empty object, like var john = {};
+// Person(): invokes function, its execution context creates variable 'this', which points to the new empty object
+// if 'Person' function returns another object, then the returned value is assigned to 'john'
+// if 'Person' function does NOT return (this case), then return the object that 'this' points to before starting execution
+var john = new Person('John', 'Doe');    
+console.log(john);
+
+// comparison: 'new' is NOT used
+var john1 = Person('John', 'Doe');  // 'this' now points to Window object, last line also gets executed
+console.log(john1);                 // undefined
+
+// function constructor prototype
+// variables that all functions get: NAME, CODE (invokable), prototype, ... 
+// prototype variable is used only by the 'new' operator
+console.log('FUNCTION CONSTRUCTOR PROTOTYPE');
+console.log(john.__proto__);
+Person.prototype.getFullName = function() {
+    return this.firstname + ' ' + this.lastname;
+}
+Person.prototype.getFormalFullName = function() {
+    return this.lastname + ', ' + this.firstname;
+}
+console.log(john.getFormalFullName());
+
+// good practice: 
+// properties set inside function constructor because they are often different values 
+// methods set in prototype as they are usually the same
+// each copy of object takes memory space, if methods are inside function constructor, it wastes memory
+// putting methods in propotype means 1 copy of this method regardless of number of objects created
