@@ -85,6 +85,9 @@ var john = new Person('John', 'Doe');
 console.log(john);
 
 // comparison: 'new' is NOT used
+// since the function has no return, john1 is undefined
+// convention is to use capital letter for the 1st letter of function if used as a function constructor
+// function constructor is mostly used in older script
 var john1 = Person('John', 'Doe');  // 'this' now points to Window object, last line also gets executed
 console.log(john1);                 // undefined
 
@@ -106,3 +109,36 @@ console.log(john.getFormalFullName());
 // methods set in prototype as they are usually the same
 // each copy of object takes memory space, if methods are inside function constructor, it wastes memory
 // putting methods in propotype means 1 copy of this method regardless of number of objects created
+
+// built-in function constructors
+console.log('BUILT-IN FUNCTION');
+var a = new Number(3);
+console.log(a);                 // Number {3}: a Number object with PrimitiveValue = 3
+console.log(a.toFixed(2));      // 3.00, using Number function's prototype function: Number.prototype.toFixed()
+                                // note: number is NOT converted to an object automatically
+a = new String("John");
+console.log(a);
+console.log(a.indexOf("o"));        // 1, use String function's prototype function
+console.log("John".indexOf("o"));   // same as previous, string "John" is boxed inside String object
+a = new Date("3/1/2015");
+console.log(a);                     // Sun Mar 01 2015 00:00:00 GMT-0800, prototype's toString() is called
+console.log(a.toDateString());      // Sun Mar 01 2015
+
+// add a function to all strings, using prototype
+String.prototype.isLengthGreaterThan = function(limit) {
+    return this.length > limit;     // this points to the string object, not its prototype
+}
+console.log("John".isLengthGreaterThan(3));
+
+Number.prototype.isPositive = function() {
+    return this > 0;
+}
+var a = new Number(3);              // wrap 3 in an object
+console.log(a.isPositive());        // cannot use 3.isPositive() as 3 is not converted to an object automatically
+
+// danger when using built-in function constructor
+var a = 3;
+var b = new Number(3);
+console.log(a == b);            // true, convert to the same type then compare
+console.log(a === b);           // false, compare including types
+// use Moment.js for date operations
