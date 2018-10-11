@@ -70,6 +70,7 @@ console.log(john);
 // like java: var john = new Person();
 // this example shows how to create an object via 'new' a function (function constructor)
 // function constructor: a normal function used to construct objects
+// function constructor is supported to mimic behaviors of other languages (e.g. class(), and new class()) w/o prototypal inheritance 
 console.log('FUNCTION CONSTRUCTOR');
 function Person(firstname, lastname) {
     console.log(this);                          // empty object with type Person
@@ -140,5 +141,80 @@ console.log(a.isPositive());        // cannot use 3.isPositive() as 3 is not con
 var a = 3;
 var b = new Number(3);
 console.log(a == b);            // true, convert to the same type then compare
-console.log(a === b);           // false, compare including types
-// use Moment.js for date operations
+console.log(a === b);           // false, also compare types
+// note: use Moment.js for date operations
+
+// array with additional prototype property
+// if using for ( in ), the additional property is shown as additional array element
+Array.prototype.myCustomFeature = 'cool!';
+
+var arr = ['John', 'Jane', 'Jim'];
+
+for (var prop in arr) {
+    console.log(prop + ': ' + arr[prop]);   // also show "myCustomFeature: cool!"
+}
+
+// safer way to loop through array
+for (var i = 0; i < arr.length; i++) {
+    console.log(i + ': ' + arr[i]);
+}
+
+// Polyfill: code that adds a feature which the engine may lack
+// following is used to create Object.create if not already exist
+// note: all modern browsers support Object.create, this is for older browsers
+if (!Object.create) {   // if not exist, then 'undefined', !undefined = true
+    Object.create = function (o) {
+        if (this.arguments.length > 1) {
+            throw new Error('Object.create implementation'
+            + ' only accepts the first parameter.');
+        }
+        function F() {};
+        F.prototype = o;
+        return new F();
+    };
+}
+
+// Object.create and "pure prototypal inheritance"
+// use Object.create(prototype) to create object, so 'person' object is the prototype of 'john'
+// then overwrite default properties
+var person = {
+    firstname: 'Default', 
+    lastname: 'Default', 
+    greet: function() {
+        return 'Hi ' + this.firstname;
+    }
+}
+
+var john = Object.create(person);
+john.firstname = 'John';
+john.lastname = 'Doe';
+console.log(john);
+console.log(john.greet());
+
+// ES6-way of creating object
+// class is still an object in javascript
+// class in javascript is 'syntactic sugar', i.e.
+// a different way to type something that does not change how it works under the hood
+console.log('ES6 and classes');
+class Person1 {
+    constructor(firstname, lastname) {
+        this.firstname = firstname;
+        this.lastname = lastname;
+    }
+
+    greet() {
+        return 'Hi ' + this.firstname;
+    }
+}
+
+class InformalPerson extends Person1 {  // set InformalPerosn's prototype to Person1 with 'extends'
+    constructor(firstname, lastname) {
+        super(firstname, lastname);     // call constructor of the prototype
+    }
+    greet() {                           // override the function
+        return 'Yo ' + this.firstname;
+    }
+}
+
+var john = new Person1('John', 'Doe');
+console.log(john.greet());
