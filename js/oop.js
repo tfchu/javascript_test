@@ -191,8 +191,8 @@ john.lastname = 'Doe';
 console.log(john);
 console.log(john.greet());
 
-// ES6-way of creating object
-// class is still an object in javascript
+// ES6's new way of creating object
+// class is "still an object" in javascript
 // class in javascript is 'syntactic sugar', i.e.
 // a different way to type something that does not change how it works under the hood
 console.log('ES6 and classes');
@@ -218,3 +218,61 @@ class InformalPerson extends Person1 {  // set InformalPerosn's prototype to Per
 
 var john = new Person1('John', 'Doe');
 console.log(john.greet());
+
+// thing to double check when intializing complex data
+// brackets "{}", "[]"
+// ":" sign, instead of "="
+// "," and ";" sign
+var people = [
+    {
+        firstname: 'John', 
+        lastname: 'Doe', 
+        addresses: [
+            '111 Main st', 
+            '222 Third st'
+        ]
+    }, 
+    {
+        firstname: 'Jane', 
+        lastname: 'Doe', 
+        addresses: [
+            '333 Main st', 
+            '444 Fifth st'
+        ], 
+        greet: function(){
+            return 'Hello!';
+        }
+    }
+]
+
+// typeof, instanceof
+console.log('typeof and instanceof');
+var a = 3;
+console.log(typeof a);      // number
+var b = "Hello";
+console.log(typeof b);      // string
+var c = {};
+console.log(typeof c);      // object
+var d = [];
+console.log(typeof d);      // also "object"
+console.log(Object.prototype.toString.call(d));     // [object Array]: more useful
+
+function Person2(name) {    // "P": function constructor by convention
+    this.name = name;       // "this" is used
+}
+var p = new Person2('Jane');
+console.log(typeof p);              // object
+console.log(p instanceof Person2);  // true
+
+console.log(typeof undefined);      // undefined
+console.log(typeof null);           // object, but this is a bug
+
+var z = function () { };
+console.log(typeof z);              // function (which is also an object in javascript)
+
+// strict mode: "use strict"
+// similar to vbscript "Implicit"
+// you must set the variable (e.g. var xxx) before you can initialize it
+// "use strict" must be at the beginning of a file (global), or 1st line of a function (only this function)
+// reference: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Strict_mode
+console.log('STRICT MODE');
